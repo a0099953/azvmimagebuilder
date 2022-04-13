@@ -52,7 +52,7 @@
                     "name": "installFsLogix",
                     "runElevated": true,
                     "runAsSystem": true,
-                    "scriptUri": "https://raw.githubusercontent.com/a0099953/azvmimagebuilder/master/scripts/InstallFsLogix.ps1 /<profile-path>/"
+                    "scriptUri": "https://raw.githubusercontent.com/a0099953/azvmimagebuilder/master/scripts/InstallFsLogix.ps1"
                 },
                 {
                     "type": "WindowsRestart",
