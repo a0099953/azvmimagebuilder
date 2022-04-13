@@ -1,22 +1,23 @@
 param( 
     [Parameter(Mandatory=$true)] $profilePath
     )
-write-host 'AIB Customization: Downloading FsLogix'
-New-Item -Path C:\\ -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
-$LocalPath = 'C:\\fslogix'
-set-Location $LocalPath
-
 $fsLogixURL="https://aka.ms/fslogix_download"
 $installerFile="fslogix_download.zip"
-
+$LocalPath = 'C:\\fslogix'
+New-Item -Path C:\\ -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
+set-Location $LocalPath
 Invoke-WebRequest $fsLogixURL -OutFile $LocalPath\$installerFile
 Expand-Archive $LocalPath\$installerFile -DestinationPath $LocalPath
-write-host 'AIB Customization: Download Fslogix installer finished'
 
-write-host 'AIB Customization: Start Fslogix installer'
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Verbose
-# .\\FSLogixSetup.ps1 -ProfilePath \\wvdSMB\wvd -Verbose 
-write-host 'AIB Customization: Finished Fslogix installer' 
+#########################
+#    FSLogix Install    #
+#########################
+Add-Content -LiteralPath C:\New-WVDSessionHost.log "Installing FSLogix"
+$fslogix_deploy_status = Start-Process `
+    -FilePath "$LocalWVDpath\FSLogix\x64\Release\FSLogixAppsSetup.exe" `
+    -ArgumentList "/install /quiet" `
+    -Wait `
+    -Passthru
 
 #######################################
 #    FSLogix User Profile Settings    #
