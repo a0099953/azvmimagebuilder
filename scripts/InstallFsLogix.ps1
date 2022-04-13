@@ -1,0 +1,82 @@
+param( 
+    [Parameter(Mandatory=$true)] $profilePath
+    )
+write-host 'AIB Customization: Downloading FsLogix'
+New-Item -Path C:\\ -Name fslogix -ItemType Directory -ErrorAction SilentlyContinue
+$LocalPath = 'C:\\fslogix'
+set-Location $LocalPath
+
+$fsLogixURL="https://aka.ms/fslogix_download"
+$installerFile="fslogix_download.zip"
+
+Invoke-WebRequest $fsLogixURL -OutFile $LocalPath\$installerFile
+Expand-Archive $LocalPath\$installerFile -DestinationPath $LocalPath
+write-host 'AIB Customization: Download Fslogix installer finished'
+
+write-host 'AIB Customization: Start Fslogix installer'
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force -Verbose
+# .\\FSLogixSetup.ps1 -ProfilePath \\wvdSMB\wvd -Verbose 
+write-host 'AIB Customization: Finished Fslogix installer' 
+
+#######################################
+#    FSLogix User Profile Settings    #
+#######################################
+Add-Content -LiteralPath C:\New-WVDSessionHost.log "Configure FSLogix Profile Settings"
+Push-Location 
+Set-Location HKLM:\SOFTWARE\
+New-Item `
+    -Path HKLM:\SOFTWARE\FSLogix `
+    -Name Profiles `
+    -Value "" `
+    -Force
+New-Item `
+    -Path HKLM:\Software\FSLogix\Profiles\ `
+    -Name Apps `
+    -Force
+Set-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name "Enabled" `
+    -Type "Dword" `
+    -Value "1"
+New-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name "CCDLocations" `
+    -Value "type=smb,connectionString=$ProfilePath" `
+    -PropertyType MultiString `
+    -Force
+Set-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name "SizeInMBs" `
+    -Type "Dword" `
+    -Value "30000"
+Set-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name "IsDynamic" `
+    -Type "Dword" `
+    -Value "1"
+Set-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name "VolumeType" `
+    -Type String `
+    -Value "vhdx"
+Set-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name "FlipFlopProfileDirectoryName" `
+    -Type "Dword" `
+    -Value "1" 
+Set-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name "SIDDirNamePattern" `
+    -Type String `
+    -Value "%username%%sid%"
+Set-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name "SIDDirNameMatch" `
+    -Type String `
+    -Value "%username%%sid%"
+Set-ItemProperty `
+    -Path HKLM:\Software\FSLogix\Profiles `
+    -Name DeleteLocalProfileWhenVHDShouldApply `
+    -Type DWord `
+    -Value 1
+Pop-Location
