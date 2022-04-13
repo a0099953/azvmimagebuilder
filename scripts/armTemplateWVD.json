@@ -52,8 +52,8 @@
                     "name": "installFsLogix",
                     "runElevated": true,
                     "runAsSystem": true,
-                    "environment_vars": ["profilepath={{ <profile-path> }}"],
-                    "scriptUri": "https://raw.githubusercontent.com/a0099953/azvmimagebuilder/master/scripts/InstallFsLogix.ps1 profilepath"
+                    "environment_vars": ["profilepath=<profile-path>"],
+                    "scriptUri": "https://raw.githubusercontent.com/a0099953/azvmimagebuilder/master/scripts/InstallFsLogix.ps1 $ENV:profilepath"
                 },
                 {
                     "type": "WindowsRestart",
