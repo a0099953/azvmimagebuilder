@@ -1,6 +1,3 @@
-param( 
-    [Parameter(Mandatory=$true)] $ProfilePath
-    )
 $fsLogixURL="https://aka.ms/fslogix_download"
 $installerFile="fslogix_download.zip"
 $LocalPath = 'C:\\fslogix'
